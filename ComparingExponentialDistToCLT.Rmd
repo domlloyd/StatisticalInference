@@ -1,0 +1,58 @@
+---
+title: "Comparing Exponential Distribution to the Central Limit Theorem"
+author: "Dominic Lloyd"
+date: "Tuesday, September 22, 2015"
+output: pdf_document
+---
+
+
+# Overview
+In this document we will investigate the exponential distribution in R and compare it with the Central Limit Theorem.  
+The exponential distribution will be simulated in R with rexp.  
+We will investigate the distribution of averages of 40 exponentials across a thousand simulations.  
+
+
+# Simulations
+The document will illustrate as follows:  
+1. The sample mean compared to the theoretical mean of the distribution.  
+2. The variance of the sample compared to the theoretical variance of the distribution.  
+3. Show that the distribution is approximately normal. (With focus on the difference between the distribution of a large collection of random exponentials and the distribution of a large collection of averages of 40 exponentials)  
+
+## Sample Mean versus Theoretical Mean
+In this test we are trying to show that we get similar results for mean and standard deviation for samples as we get for larger populations.  
+We know that when we use rexp to generate exponential numbers that the mean of these number will be 1/lambda (or 1/rate). Therefore if we use lambda = 0.2 as the rate parameter for rexp, we would expect to see a mean around 5 and a standard deviation around 5.   
+
+In this section we will generate a thousand samples of 40 random exponential numbers. In the histogram we will show the sample means  
+
+```{r}
+sample_means = NULL
+sample_sd    = NULL
+for (i in 1 : 1000) sample_means = c(sample_means, mean(rexp(40, rate = 0.2)))
+for (i in 1 : 1000) sample_sd    = c(sample_sd, sd(rexp(40, rate = 0.2)))
+mean_mns <- mean(mns)
+sd_mns   <- sd(mns)
+hist(mns, col = 'grey')
+abline(v = mean_mns, col = "red", lwd = 1)
+abline(v = sd_mns, col = "blue", lwd = 1)
+```
+
+## Sample Variance versus Theoretical Variance
+Include figures (output from R) with titles. Highlight the variances you are comparing. Include text that explains your understanding of the differences of the variances.
+
+## Distribution
+Via figures and text, explain how one can tell the distribution is approximately normal.
+
+
+
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r}
+plot(cars)
+```
+
+
