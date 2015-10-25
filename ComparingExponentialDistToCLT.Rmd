@@ -1,7 +1,7 @@
 ---
 title: "Comparing Exponential Distribution to the Central Limit Theorem"
 author: "Dominic Lloyd"
-date: "Tuesday, September 22, 2015"
+date: "Tuesday, October 22, 2015"
 output: pdf_document
 ---
 
@@ -20,51 +20,60 @@ The document will illustrate as follows:
 
 ## Sample Mean versus Theoretical Mean
 In this test we are trying to show that we get similar results for mean and standard deviation for samples as we get for larger populations.  
-We know that when we use rexp to generate exponential numbers that the mean of these number will be 1/lambda (or 1/rate). Therefore if we use lambda = 0.2 as the rate parameter for rexp, we would expect to see a mean around 5 and a standard deviation around 5.   
+We know that when we use rexp to generate exponential numbers that the mean of these number will be 1/lambda (or 1/rate). Therefore if we use lambda = 0.2 as the rate parameter for rexp, we would expect to see a mean around 5 and a standard deviation around 5.  
 
-In this section we will generate a thousand samples of 40 random exponential numbers. In the histogram we will show the sample means  
+In this section we will generate a thousand samples of 40 random exponential numbers. In the histogram we will show the sample mean.  
 
 ```{r}
 sample_means = NULL
-sample_sd    = NULL
+
 for (i in 1 : 1000) sample_means = c(sample_means, mean(rexp(40, rate = 0.2)))
-for (i in 1 : 1000) sample_sd    = c(sample_sd, sd(rexp(40, rate = 0.2)))
-mean_mns <- mean(mns)
-sd_mns   <- sd(mns)
-hist(mns, col = 'grey')
-abline(v = mean_mns, col = "red", lwd = 1)
-abline(v = sd_mns, col = "blue", lwd = 1)
+
+mean_mns <- mean(sample_means)
+
+hist(sample_means, col = 'grey')
+
+abline(v = mean_mns, col = "red", lwd = 6)
 ```
+
+As the graph shows, from the 1000 simulations of 40 exponentials the data has become centred around the mean (red line) which shows the central limit theorem in action. The theoretical mean is 5 and the sample mean (red line) should be approximately 5.  
 
 ## Sample Variance versus Theoretical Variance
-Include figures (output from R) with titles. Highlight the variances you are comparing. Include text that explains your understanding of the differences of the variances.
+Include figures (output from R) with titles. Highlight the variances you are comparing. Include text that explains your understanding of the differences of the variances.  
 
-## Distribution
-Via figures and text, explain how one can tell the distribution is approximately normal.
-
-
+The theoretical variance is the standard deviation (5) to the power 2 = 25.  
+Repeating our 1000 samples of 40 exponentials, we find the standard deviation to identify the variance. We then take the mean of the variances and plot it on our graph (red line):  
 
 
 ```{r}
-summary(cars)
+sample_sd = NULL
+
+for (i in 1 : 1000) sample_sd = c(sample_sd, sd(rexp(40, rate = 0.2)))
+
+variances <- sample_sd ^ 2
+
+mean_variances <- mean(variances)
+
+hist(variances, col = 'grey')
+
+abline(v = mean_variances, col = "red", lwd = 6)
 ```
 
-You can also embed plots, for example:
+## Distribution
+Via figures and text, explain how one can tell the distribution is approximately normal.  
+  
+In this section we will take the 1000 sample means taken from a simulation of 40 random exponentials and we will plot that on a graph. We will then overlay the standard normal line. This will show us that the distribution is approximately normal.  
+
 
 ```{r}
-library("ggplot2")
+library(ggplot2)
 nosim <- 1000
-cfunc <- function(x, n) sqrt(n) * (mean(x) - 3.5) / 1.71
+cfunc <- function(x, n) sqrt(n) * (mean(x) - 5) / 5
 dat <- data.frame(
-  x = c(apply(matrix(sample(1 : 6, nosim * 10, replace = TRUE), 
-                     nosim), 1, cfunc, 10),
-        apply(matrix(sample(1 : 6, nosim * 20, replace = TRUE), 
-                     nosim), 1, cfunc, 20),
-        apply(matrix(sample(1 : 6, nosim * 30, replace = TRUE), 
-                     nosim), 1, cfunc, 30)
-        ),
-  size = factor(rep(c(10, 20, 30), rep(nosim, 3))))
-g <- ggplot(dat, aes(x = x, fill = size)) + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
+  x = c(apply(matrix(sample_means, nosim), 1, cfunc, 40)),
+  size = factor(rep(c(40), rep(nosim, 1))))
+g <- ggplot(dat, aes(x = x, fill = size)) 
+g <- g + geom_histogram(alpha = .20, binwidth=.3, colour = "black", aes(y = ..density..)) 
 g <- g + stat_function(fun = dnorm, size = 2)
 g + facet_grid(. ~ size)
 ```

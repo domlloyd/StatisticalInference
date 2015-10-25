@@ -26,7 +26,7 @@ Some criteria that you will be evaluated on
 rm(list=ls())
 data("ToothGrowth")
 ```
-Output of ?ToothGrowth
+Output of ?ToothGrowth in R  
 The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods (orange juice or ascorbic acid).  
 The dataset shows The Effect of Vitamin C on Tooth Growth in Guinea Pigs  
 The dataset is a data frame with 60 observations on 3 variables.  
@@ -47,6 +47,14 @@ The 6 independent sets are as follows, with each independent set containing 10 g
  - Dose level 2.0 mg Vitamin C delivered as ascorbic acid  
  - Dose level 2.0 mg Vitamin C delivered as orange juice  
  
+
+```{r}
+tg <- ToothGrowth
+plot(tg$dose, tg$len)
+```
+
+We have a realtively small set of data. The graph shows us that there appears to be a correlation between an increase in tooth length and the increase in dose of vitamin C. We will now do some further research to break the guniea pigs down in to their individual groups so we can start to apply confidence levels to the range of upper and lower values for average tooth length given dose and method of delivery.  
+
 There are 6 independent sets of different guinea pigs each of a small sample size of 10 pigs. Given the small sample size we will use T confidence intervals to work out a 95% confidence interval for the average length for a particular dose and delivery method. 
 
 Let's use R to break down the data in to each of our test sets.
@@ -136,4 +144,25 @@ upper_hd_oj <- mean_len_hd_oj + step6_hd_oj
 
 ```
 
+```{r}
+## add our data to a data frame to plot the results for confidence intervals.
+library(ggplot2)
+d <- data.frame(y = c(mean_len_ld_aa, mean_len_md_aa, mean_len_hd_aa, mean_len_ld_oj, mean_len_md_oj, mean_len_hd_oj, lower_ld_oj, lower_md_oj, lower_hd_oj, upper_ld_oj, upper_md_oj, upper_hd_oj, lower_ld_aa, lower_md_aa, lower_hd_aa, upper_ld_aa, upper_md_aa, upper_hd_aa), x = c(0.5, 1.0, 2.0, 0.5, 1.0, 2.0, 0.5, 1.0, 2.0, 0.5, 1.0, 2.0, 0.5, 1.0, 2.0, 0.5, 1.0, 2.0), legend = c('AA','AA','AA','OJ','OJ','OJ', 'OJ', 'OJ', 'OJ', 'OJ', 'OJ', 'OJ', 'AA', 'AA', 'AA', 'AA', 'AA', 'AA'))
+g <- ggplot(d, aes(x=x,y=y))
+g <- g + geom_line(size = 2, aes(color = legend))
+g <- g + ggtitle("T Conf intervals for vit c dose/method vs Tooth Growth in Guinea Pigs")
+g <- g + xlab("Vit C dose mg")
+g <- g + ylab("tooth length")
+g
+```
 
+# Conclusion and assumptions
+We are assuming that doses of vitamin c are generally beneficial to tooth growth in guniea pigs. There is no data in this set for guinea pigs that have not been given supplements, so we can only work with the supplement data.  
+We are assuming that vitamin c does not have adverse health impacts on guinea pigs.  
+Our conclusion is:  
+  - in low doses (0.5mg and 1.0mg) orange juice seems more effective at increasing tooth growth than ascorbic acid.  
+  - from 1.0mg to 2.0mg there is only a small increase in the effectiveness of orange juice, showing a diminishing increase in tooth size.  
+  - as the doses increase (2.0mg) we can see that the effectiveness of orange juice and ascorbic acid converge.  
+  - as the doses increase across the range of doses, the 95% confidence intervals for orange juice appear to be narrowing and the confidence intervals for ascorbic acid appear to be expanding. It is not possible to say what this might mean given the small sample size, so more study might be needed with this dose and delivery method.  
+  
+  
